@@ -1,0 +1,27 @@
+.chart-wrapper .drawer{width: 60% !important; overflow: hidden !important; min-width: 290px;}
+.chart-wrapper .chart-container .chart-page{width: 100% !important;}
+.ms-alarm-color .ms-buy-ratio.md-buy{background-color: orange; color: white;}
+.ms-alarm-color .ms-sell-ratio.md-sell{background-color: #d382ff; color: white;}
+.ms-alarm-color .ms-buy-ratio.md-buy > span, .ms-alarm-color .ms-sell-ratio.md-sell > span{color: white !important;}
+.ms-md-ratio > span{display:inline-block; padding: 5px 10px; font-size: 12px;}
+.chart-wrapper .drawer .instrument-info .action-buttons button {
+    margin-right: 0px;
+    min-width: 44px;
+}
+.chart-wrapper .chart-container .chart-page .drawer-menu{bottom: 0px !important; top: unset;}
+.chart-wrapper .drawer .price-change{width: 100px !important}
+.chart-wrapper .drawer .instrument-info {
+    margin: 20px 0;
+    margin-bottom: 0px !important;
+}
+.chart-wrapper .drawer .box {
+  padding-top: 5px;
+}
+.chart-wrapper .drawer .instrument-info{
+  margin: 0 !important;
+}
+.break-sm cq-hu-static div>* {
+  width: 100px !important;
+}
+
+cq-hu-static{top: 43px !important; left: 10px !important;}
