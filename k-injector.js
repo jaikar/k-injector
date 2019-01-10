@@ -8,6 +8,7 @@ var showMarketDepth = true;
 if(dayNum > 5) {
   showMarketDepth = false;
 }
+
 if(dayHours < 9 || dayHours > 15) {
   showMarketDepth = false;
 }
@@ -63,8 +64,9 @@ function fireEvent(node, eventName) {
     }
 };
 
+// initiate marketdepth drawer on load.
 var t =  setTimeout(function(){ 
-  openCloseDrawer();
+  //openCloseDrawer();
 }, 1000);
 
 function openCloseDrawer() {
@@ -211,8 +213,28 @@ function initHotKeys() {
   });
 }
 
-function runScript() {
+function refreshChart() {
+  console.log('refresh chart initiated');
+  var rct = setInterval(function() {
+    var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
+    var chartInterval = jQuery('#chart-iframe').contents().find('.ciq-period cq-clickable');
+    var cDT = new Date();
+    var cMin = cDT.getMinutes();
+    var cSec = cDT.getSeconds();
+    chartInterval = parseInt(chartInterval.html());
     
+    if(chartInterval > 0  && cMin % chartInterval == 0 && cSec == 0) {
+      console.log('refresh chart fired');
+      for (var i=0;i<RCl.length; i++) {
+          fireEvent(RCl[i], 'click');
+      }
+    }
+  }, 1000);
+}
+
+function runScript() {
+
+    refreshChart();
     var st = setInterval(function() {
         if(!isInitHandshakeWithParent) {
           initHotKeys();
@@ -223,13 +245,13 @@ function runScript() {
           isInitHandshakeWithParent = true;
         }
         // comment out this to open the market depth window.
-        
+        buildCustomWrapper();
         if(!showMarketDepth) {
             return false;
         }
         
             
-        buildCustomWrapper();
+        
         if(jQuery('#ms-customs-wrapper').length == 0) return false;
         
         var el = document.querySelectorAll(".market-depth");
