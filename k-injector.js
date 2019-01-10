@@ -213,7 +213,11 @@ function initHotKeys() {
   });
 }
 
-function refreshChart() {
+function initRefreshChart() {
+  // refresh chart during market hours only.
+  if(!showMarketDepth) {
+    return false;
+  }
   console.log('refresh chart initiated');
   var rct = setInterval(function() {
     var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
@@ -234,7 +238,8 @@ function refreshChart() {
 
 function runScript() {
 
-    refreshChart();
+    initRefreshChart();
+    
     var st = setInterval(function() {
         if(!isInitHandshakeWithParent) {
           initHotKeys();
