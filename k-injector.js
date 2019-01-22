@@ -219,7 +219,7 @@ function initHotKeys() {
 function initRefreshChart() {
   // refresh chart during market hours only.
   if(!showMarketDepth) {
-   // return false;
+    return false;
   }
   var intervalArray = [];
   intervalArray[1] = 0;
