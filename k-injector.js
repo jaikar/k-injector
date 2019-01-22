@@ -30,7 +30,7 @@ function fireEvent(node, eventName) {
      if (node.dispatchEvent) {
         // Gecko-style approach (now the standard) takes more work
         var eventClass = "";
-
+      
         // Different events have different event classes.
         // If this switch statement can't map an eventName to an eventClass,
         // the event firing is going to fail.
@@ -43,6 +43,7 @@ function fireEvent(node, eventName) {
 
             case "focus":
             case "change":
+            case "stxtap":
             case "blur":
             case "select":
                 eventClass = "HTMLEvents";
@@ -218,23 +219,43 @@ function initHotKeys() {
 function initRefreshChart() {
   // refresh chart during market hours only.
   if(!showMarketDepth) {
-    return false;
+   // return false;
   }
+  var intervalArray = [];
+  intervalArray[1] = 0;
+  intervalArray[3] = 1;
+  intervalArray[5] = 2;
+  intervalArray[10] = 3;
+  intervalArray[15] = 4;
+  intervalArray[30] = 5;
+
   console.log('refresh chart initiated');
   var rct = setInterval(function() {
+    var layoutInterval = jQuery.parseJSON(localStorage.getItem('layout'));
+    
     var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
     var chartInterval = jQuery('#chart-iframe').contents().find('.ciq-period cq-clickable');
     var saveLayoutButton = jQuery('#chart-iframe').contents().find('.save-layout-btn');
     var cDT = new Date();
     var cMin = cDT.getMinutes();
     var cSec = cDT.getSeconds();
+    var intervalMenu = jQuery('#chart-iframe').contents().find('.ciq-period .ps-container cq-item');
     chartInterval = parseInt(chartInterval.html());
-    
+    //console.log('layout interval' + layoutInt.interval);
     if(chartInterval != currentInterval && saveLayoutButton) {
         fireEvent(saveLayoutButton[0], 'click');
         currentInterval = chartInterval;
     }
     
+    // change chart interval in all opened charts
+    if(currentInterval != layoutInterval.interval) {
+      fireEvent(intervalMenu[intervalArray[layoutInterval.interval]], 'stxtap');
+      jQuery('#chart-iframe').contents().find('.ciq-menu.ciq-period').removeClass('stxMenuActive');
+      currentInterval = layoutInterval.interval;
+    }
+    
+    //console.log(intervalMenu[2].innerHTML);
+    //fireEvent(intervalMenu[2], 'stxtap');
     if(chartInterval > 0  && cMin % chartInterval == 0 && cSec == 0) {
       console.log('refresh chart fired');
       for (var i=0;i<RCl.length; i++) {
@@ -262,8 +283,6 @@ function runScript() {
         if(!showMarketDepth) {
             return false;
         }
-        
-            
         
         if(jQuery('#ms-customs-wrapper').length == 0) return false;
         
@@ -390,8 +409,6 @@ function runPositionsScript() {
     
     escapeWindow('close-positions');
     
-    
-    
     jQuery(window).keyup(function (event) {
 
         var keycode = event.which;
@@ -447,3 +464,5 @@ function runPositionsScript() {
              
         }
     }, false);
+    
+  
