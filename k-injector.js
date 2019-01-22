@@ -5,6 +5,8 @@ var objDate = new Date();
 var dayNum = objDate.getDay();
 var dayHours = objDate.getHours();
 var showMarketDepth = true;
+var currentInterval = 1;
+
 if(dayNum > 5) {
   showMarketDepth = false;
 }
@@ -222,10 +224,16 @@ function initRefreshChart() {
   var rct = setInterval(function() {
     var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
     var chartInterval = jQuery('#chart-iframe').contents().find('.ciq-period cq-clickable');
+    var saveLayoutButton = jQuery('#chart-iframe').contents().find('.save-layout-btn');
     var cDT = new Date();
     var cMin = cDT.getMinutes();
     var cSec = cDT.getSeconds();
     chartInterval = parseInt(chartInterval.html());
+    
+    if(chartInterval != currentInterval && saveLayoutButton) {
+        fireEvent(saveLayoutButton[0], 'click');
+        currentInterval = chartInterval;
+    }
     
     if(chartInterval > 0  && cMin % chartInterval == 0 && cSec == 0) {
       console.log('refresh chart fired');
