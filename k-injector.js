@@ -245,13 +245,14 @@ function initRefreshChart() {
     if(chartInterval != currentInterval && saveLayoutButton) {
         fireEvent(saveLayoutButton[0], 'click');
         currentInterval = chartInterval;
+        //return;
     }
-    
     // change chart interval in all opened charts
-    if(currentInterval != layoutInterval.interval) {
+    else if(currentInterval != layoutInterval.interval) {
       fireEvent(intervalMenu[intervalArray[layoutInterval.interval]], 'stxtap');
       jQuery('#chart-iframe').contents().find('.ciq-menu.ciq-period').removeClass('stxMenuActive');
       currentInterval = layoutInterval.interval;
+      //return;
     }
     
     //console.log(intervalMenu[2].innerHTML);
