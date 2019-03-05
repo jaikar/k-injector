@@ -6,6 +6,8 @@ var dayNum = objDate.getDay();
 var dayHours = objDate.getHours();
 var showMarketDepth = true;
 var currentInterval = 1;
+var refreshChartRunning = false;
+var isHotKeysInitiated = false;
 
 if(dayNum > 5) {
   showMarketDepth = false;
@@ -138,9 +140,7 @@ function escapeWindow(message) {
 }
 
 function initHotKeys() {
-  $('#chart-iframe').contents().find('.stx-subholder').on('dblclick', function() {
-    openCloseDrawer();
-  });
+  
   jQuery(window).keyup(function (event) {
       var keycode = event.which;
       console.log(keycode);
@@ -214,6 +214,26 @@ function initHotKeys() {
       }
       event.preventDefault();
   });
+  
+  
+  if($('#chart-iframe').contents().find('.stx_crosshair').length > 0) {
+    $('#chart-iframe').contents().find('.stx_crosshair').on('dblclick', function() {
+        
+    });
+  }
+  
+  if($('#chart-iframe').contents().find('.stx-subholder').length > 0) {
+    $('#chart-iframe').contents().find('.stx-subholder').on('dblclick', function() {
+      
+      var highPrice = $('#chart-iframe').contents().find('cq-hu-high').html();
+      var lowPrice = $('#chart-iframe').contents().find('cq-hu-low').html();
+      var chartSymbolX = $('#chart-iframe').contents().find('cq-symbol').html();
+      
+      window.parent.postMessage('price-update:'+ chartSymbolX + ':' + highPrice + ',' + lowPrice, "http://minestocks.com");
+      //openCloseDrawer();
+    });
+    isHotKeysInitiated = true;
+  }
 }
 
 function initRefreshChart() {
@@ -221,6 +241,9 @@ function initRefreshChart() {
   if(!showMarketDepth) {
     return false;
   }
+  
+  refreshChartRunning = true;
+  
   var intervalArray = [];
   intervalArray[1] = 0;
   intervalArray[3] = 1;
@@ -243,21 +266,26 @@ function initRefreshChart() {
     chartInterval = parseInt(chartInterval.html());
     //console.log('layout interval' + layoutInt.interval);
     if(chartInterval != currentInterval && saveLayoutButton) {
+      if(saveLayoutButton.length > 0) {
         fireEvent(saveLayoutButton[0], 'click');
         currentInterval = chartInterval;
         //return;
+      }
     }
     // change chart interval in all opened charts
     else if(currentInterval != layoutInterval.interval) {
-      fireEvent(intervalMenu[intervalArray[layoutInterval.interval]], 'stxtap');
-      jQuery('#chart-iframe').contents().find('.ciq-menu.ciq-period').removeClass('stxMenuActive');
-      currentInterval = layoutInterval.interval;
+      if(intervalMenu.length > 0) {
+        fireEvent(intervalMenu[intervalArray[layoutInterval.interval]], 'stxtap');
+        jQuery('#chart-iframe').contents().find('.ciq-menu.ciq-period').removeClass('stxMenuActive');
+        currentInterval = layoutInterval.interval;
+      }
+      
       //return;
     }
     
     //console.log(intervalMenu[2].innerHTML);
     //fireEvent(intervalMenu[2], 'stxtap');
-    if(chartInterval > 0  && cMin % chartInterval == 0 && cSec == 0) {
+    if(chartInterval > 0  && cMin % chartInterval == 0 && cSec == 0 && RCl.length > 0) {
       console.log('refresh chart fired');
       for (var i=0;i<RCl.length; i++) {
           fireEvent(RCl[i], 'click');
@@ -268,17 +296,26 @@ function initRefreshChart() {
 
 function runScript() {
 
-    initRefreshChart();
-    
     var st = setInterval(function() {
         if(!isInitHandshakeWithParent) {
-          initHotKeys();
+          /*var hksto = setTimeout(function() {
+            initHotKeys();
+          }, 10000);*/
+          
           escapeWindow('');
           //alert('hello');
           
-          
           isInitHandshakeWithParent = true;
         }
+        
+        if(!isHotKeysInitiated) {
+          initHotKeys();
+        }
+        
+        if(!refreshChartRunning) {
+          initRefreshChart();
+        }
+        
         // comment out this to open the market depth window.
         buildCustomWrapper();
         if(!showMarketDepth) {
