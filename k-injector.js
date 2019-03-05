@@ -501,6 +501,6 @@ function runPositionsScript() {
         } else {
              
         }
-    }, false);
+    }, false); 
     
   
