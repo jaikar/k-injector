@@ -109,7 +109,7 @@ function buildCustomWrapper() {
   }
 }
 
-if(window.location.pathname.indexOf('/ext/chart') !== -1) {
+if(window.location.pathname.indexOf('/ext/ciq') !== -1) {
   window.parent.postMessage("update-frames", "http://minestocks.com");
   AddExternals();
   runScript();
@@ -257,6 +257,7 @@ function initRefreshChart() {
     var layoutInterval = jQuery.parseJSON(localStorage.getItem('layout'));
     
     var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
+    
     var chartInterval = jQuery('#chart-iframe').contents().find('.ciq-period cq-clickable');
     var saveLayoutButton = jQuery('#chart-iframe').contents().find('.save-layout-btn');
     var cDT = new Date();
