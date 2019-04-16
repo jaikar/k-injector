@@ -109,7 +109,8 @@ function buildCustomWrapper() {
   }
 }
 
-if(window.location.pathname.indexOf('/ext/ciq') !== -1) {
+//if(window.location.pathname.indexOf('/ext/ciq') !== -1) {
+if(window.location.pathname.indexOf('/ext/chart') !== -1 || window.location.pathname.indexOf('/ext/ciq') !== -1) {
   window.parent.postMessage("update-frames", "http://minestocks.com");
   AddExternals();
   runScript();
@@ -246,11 +247,12 @@ function initRefreshChart() {
   
   var intervalArray = [];
   intervalArray[1] = 0;
-  intervalArray[3] = 1;
-  intervalArray[5] = 2;
-  intervalArray[10] = 3;
-  intervalArray[15] = 4;
-  intervalArray[30] = 5;
+  intervalArray[2] = 1;
+  intervalArray[3] = 2;
+  intervalArray[5] = 3;
+  intervalArray[10] = 4;
+  intervalArray[15] = 5;
+  intervalArray[30] = 6;
 
   console.log('refresh chart initiated');
   var rct = setInterval(function() {
