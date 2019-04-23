@@ -249,10 +249,11 @@ function initRefreshChart() {
   intervalArray[1] = 0;
   intervalArray[2] = 1;
   intervalArray[3] = 2;
-  intervalArray[5] = 3;
-  intervalArray[10] = 4;
-  intervalArray[15] = 5;
-  intervalArray[30] = 6;
+  intervalArray[4] = 4;
+  intervalArray[5] = 4;
+  intervalArray[10] = 5;
+  intervalArray[15] = 6;
+  intervalArray[30] = 7;
 
   console.log('refresh chart initiated');
   var rct = setInterval(function() {
