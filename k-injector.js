@@ -225,6 +225,10 @@ function initHotKeys() {
   
   if($('#chart-iframe').contents().find('.stx-subholder').length > 0) {
     $('#chart-iframe').contents().find('.stx-subholder').on('dblclick', function() {
+      var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
+      for (var i=0;i<RCl.length; i++) {
+          fireEvent(RCl[i], 'click');
+      }
       
       var highPrice = $('#chart-iframe').contents().find('cq-hu-high').html();
       var lowPrice = $('#chart-iframe').contents().find('cq-hu-low').html();
