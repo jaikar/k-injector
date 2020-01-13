@@ -244,13 +244,25 @@ function initHotKeys() {
       
       var highPrice = $('#chart-iframe').contents().find('cq-hu-high').html();
       var lowPrice = $('#chart-iframe').contents().find('cq-hu-low').html();
-      var chartSymbolX = $('#chart-iframe').contents().find('cq-symbol').html();
-      
+      var chartSymbolX = getParameterByName('symbol', $('#chart-iframe').attr('src')); 
+      chartSymbolX = chartSymbolX.replace(/&/, '_');
+      //alert(chartSymbolX);
+      //var chartSymbolX = $('#chart-iframe').contents().find('cq-symbol-description').html();
       window.parent.postMessage('price-update:'+ chartSymbolX + ':' + highPrice + ',' + lowPrice, "http://minestocks.com");
       //openCloseDrawer();
     });
     isHotKeysInitiated = true;
   }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
 function initRefreshChart() {
