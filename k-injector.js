@@ -4,7 +4,7 @@ var isInitHandshakeWithParent = false;
 var objDate = new Date();
 var dayNum = objDate.getDay();
 var dayHours = objDate.getHours();
-var showMarketDepth = true;
+var showMarketDepth = false;
 var currentInterval = 1;
 var refreshChartRunning = false;
 var isHotKeysInitiated = false;
@@ -267,8 +267,9 @@ function getParameterByName(name, url) {
 
 function initRefreshChart() {
   // refresh chart during market hours only.
+  
   if(!showMarketDepth) {
-    return false;
+    //return false;
   }
   
   refreshChartRunning = true;
@@ -290,13 +291,18 @@ function initRefreshChart() {
     var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
     
     var chartInterval = jQuery('#chart-iframe').contents().find('.ciq-period cq-clickable');
+    
     var saveLayoutButton = jQuery('#chart-iframe').contents().find('.save-layout-btn');
     var cDT = new Date();
     var cMin = cDT.getMinutes();
     var cSec = cDT.getSeconds();
     var intervalMenu = jQuery('#chart-iframe').contents().find('.ciq-period .ps-container cq-item');
     chartInterval = parseInt(chartInterval.html());
-    //console.log('layout interval' + layoutInt.interval);
+    if(isNaN(chartInterval)) {
+        chartInterval = jQuery('#chart-iframe').contents().find('.ciq-period cq-clickable translate');
+        chartInterval = parseInt(chartInterval.html());
+    }
+    //console.log('layout interval' + chartInterval);
     if(chartInterval != currentInterval && saveLayoutButton) {
       if(saveLayoutButton.length > 0) {
         fireEvent(saveLayoutButton[0], 'click');
@@ -534,5 +540,6 @@ function runPositionsScript() {
              
         }
     }, false); 
+    
     
   
