@@ -1,4 +1,6 @@
-.chart-wrapper .drawer{width: 60% !important; overflow: hidden !important; min-width: 290px;}
+.chart-wrapper .drawer{width: 60% !important; overflow: hidden !important; min-width: 290px; display: none;}
+.chart-wrapper .closed-drawer.inapp-chart{display: none !important;}
+.icon-toggles{display: block !important;}
 .chart-wrapper .chart-container .chart-page{width: 100% !important;}
 .ms-alarm-color .ms-buy-ratio.md-buy{background-color: orange; color: white;}
 .ms-alarm-color .ms-sell-ratio.md-sell{background-color: #d382ff; color: white;}
