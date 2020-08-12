@@ -72,7 +72,161 @@ function fireEvent(node, eventName) {
 // initiate marketdepth drawer on load.
 var t =  setTimeout(function(){ 
   //openCloseDrawer();
+  tvcLoadChartFunctions();
+  
+  if(parseInt($('#chart-iframe').css('height')) < 500) {
+    $('#chart-iframe').css('height', '500px');
+  }
+  
 }, 1000);
+
+
+function tvcLoadChartFunctions() {
+  
+  if(window.location.pathname.indexOf('/ext/tvc') !== -1 
+      || window.location.pathname.indexOf('/static/tv-chart') !== -1) {
+        
+      //console.log('loading tvc charts functons');
+      fireEvent($('.pane-legend-minbtn')[0], 'click');
+      fireEvent($('.background-Q1Fcmxly-')[0], 'click');
+      //alert($('.pane-legend-item-value-container > span:eq(0) > span:eq(1)').html());
+      
+      $('.item-2xPVYue0-').live('click', function() {
+        //alert($(this).length);
+        //alert('sdfdf');
+      });
+      
+      // refresh chart
+      $('canvas').on('dblclick', function() {
+          refreshTradingViewChart();
+          
+          tvcChangeChartType(3);
+          
+        	var highPrice = $('.pane-legend-item-value-container > span:eq(1) > span:eq(1)').html();
+        	var lowPrice = $('.pane-legend-item-value-container > span:eq(2) > span:eq(1)').html();
+        	var chartSymbolX = getParameterByName('symbol', $('#chart-iframe').attr('src')); 
+        	chartSymbolX = $('.pane-legend-title__description').html().replace(/&/, '_');
+        	//alert(chartSymbolX);
+        	window.parent.postMessage('price-update:'+ chartSymbolX + ':' + highPrice + ',' + lowPrice, "https://kite.zerodha.com");
+        //alert($('.common-tooltip-vertical').html());      
+          
+      });
+      
+      //console.log('chart type name ' + $('.fake-37paHC6T- .menu-16FRUKka-').attr('title'));
+      
+      fireEvent($('.last-2VBe7EFW-')[0], 'click');
+        fireEvent($('.context-menu .item:eq(5)')[0], 'click');
+      
+      var tvcSyncInterval = setInterval(function() {
+        tvcSetChartIntervalInAllChartsOnChange();
+        tvcChangeChartType();
+      }, 1000);
+  }
+}
+
+function tvcSetChartIntervalInAllChartsOnChange() {
+    // change interval on all charts.
+    var tvcLayoutInterval = jQuery.parseJSON(localStorage.getItem('tradingview.chart.lastUsedTimeBasedResolution'));
+    // do not change interval when refreshing.
+    if(tvcLayoutInterval > 100) return false;
+    tvcLayoutInterval = parseInt(tvcLayoutInterval);
+    var tvcCurrentInterval = parseInt($('.value-DWZXOdoK-').html());
+    console.log('current interval: ' + tvcCurrentInterval + ', layout interval: ' + tvcLayoutInterval);
+    if(tvcLayoutInterval != tvcCurrentInterval) {
+      var toIntervalIndex = tvcGetIntervalIndex(tvcLayoutInterval+'m');
+      tvcChangeChartInterval(toIntervalIndex);
+    }
+    //console.log('chartInterval ' + tvcLayoutInterval);
+}
+
+function tvcGetIntervalIndex(interval) {
+    var tvcIntArray = new Array();
+    tvcIntArray['1m'] = 0;
+    tvcIntArray['2m'] = 1;
+    tvcIntArray['3m'] = 2;
+    tvcIntArray['4m'] = 3;
+    tvcIntArray['5m'] = 4;
+    tvcIntArray['10m'] = 5;
+    tvcIntArray['15m'] = 6;
+    tvcIntArray['120m'] = 9;
+    
+    if(tvcIntArray[interval] == undefined) {
+      console.log('interval not defined for tvc');
+      return false;
+    }
+    
+    return tvcIntArray[interval];
+}
+
+function refreshTradingViewChart() {
+  var tvcInterval = parseInt($('.value-DWZXOdoK-').html());
+  var tvcIntType = $('.metric-uxyW5qk0-').html();
+  var intervalIndex = tvcGetIntervalIndex(tvcInterval+tvcIntType);
+  
+  // first change to different interval and change back.
+  tvcChangeChartInterval(9);
+  // then select the previous selected minute.
+  var tvcIntervalTo = setTimeout(function(index) {
+    tvcChangeChartInterval(index);
+  }, 100, intervalIndex);
+}
+
+function tvcChangeChartType() {
+  // interval = 3;
+  var currentChartType = $('.fake-37paHC6T- .menu-16FRUKka-').attr('title');
+  var tvcChartIndex = new Array();
+  tvcChartIndex[0] = 0;
+  tvcChartIndex[1] = 1;
+  tvcChartIndex[2] = 4;
+  tvcChartIndex[3] = 5;
+  tvcChartIndex[4] = 7;
+  tvcChartIndex[5] = 9;
+  tvcChartIndex[6] = 10;
+  tvcChartIndex[7] = 8;
+  tvcChartIndex[8] = 3;
+  tvcChartIndex[9] = 2;
+  tvcChartIndex[10] = 6;
+  
+  var tvcChartName = new Array();
+  tvcChartName[0] = 'Bars';
+  tvcChartName[1] = 'Candles';
+  tvcChartName[2] = 'Line';
+  tvcChartName[3] = 'Area';
+  tvcChartName[4] = 'Renko';
+  tvcChartName[5] = 'Kagi';
+  tvcChartName[6] = 'Point & Figure';
+  tvcChartName[7] = 'Line Break';
+  tvcChartName[8] = 'Heikin Ashi';
+  tvcChartName[9] = 'Hollow Candles';
+  tvcChartName[10] = 'Baseline';
+  
+  var tvcLayoutChartType = jQuery.parseJSON(localStorage.getItem('tradingview.chart.lastUsedStyle'));
+  
+  if(tvcChartName[tvcLayoutChartType] != currentChartType) {
+  
+    var tvcChartTypeIndex = tvcChartIndex[tvcLayoutChartType];
+    //var activeChartType = $('.isActive-2j-GhQs_-').index('.item-2xPVYue0-');
+    //console.log('active chart type ' + activeChartType);
+    
+    fireEvent($('.menu-16FRUKka-')[0], 'click');
+    fireEvent($('.item-2xPVYue0-:eq('+tvcChartTypeIndex+')')[0], 'click');
+  }
+}
+
+function tvcChangeChartInterval(interval) {
+  // open chart interval menu
+  fireEvent($('.menu-1fA401bY-')[0], 'click');
+  // select the 2 hour chart
+  fireEvent($('.item-2xPVYue0-:eq('+interval+')')[0], 'click');
+  
+  /*var delayClick = setTimeout(function(i) {
+    fireEvent($('.item-2xPVYue0-:eq('+i+')')[0], 'click');
+  }, 100, interval);
+  
+  var delayClick2 = setTimeout(function(i) {
+    fireEvent($('.item-2xPVYue0-:eq('+i+')')[0], 'click');
+  }, 500, interval);*/
+}
 
 function openCloseDrawer() {
     //var t =  setTimeout(function(){ 
@@ -110,7 +264,7 @@ function buildCustomWrapper() {
 }
 
 //if(window.location.pathname.indexOf('/ext/ciq') !== -1) {
-if(window.location.pathname.indexOf('/ext/chart') !== -1 || window.location.pathname.indexOf('/ext/ciq') !== -1) {
+if(window.location.pathname.indexOf('/ext/chart') !== -1 || window.location.pathname.indexOf('/ext/ciq') !== -1 || window.location.pathname.indexOf('/ext/tvc') !== -1) {
   window.parent.postMessage("update-frames", "http://minestocks.com");
   AddExternals();
   runScript();
@@ -233,8 +387,6 @@ function initHotKeys() {
   }
   
   if($('#chart-iframe').contents().find('.stx-subholder').length > 0) {
-    
-    
     
     $('#chart-iframe').contents().find('.stx-subholder').on('dblclick', function() {
       var RCl = jQuery('#chart-iframe').contents().find('.refresh-chart');
@@ -531,6 +683,8 @@ function runPositionsScript() {
           msExitOrders(jQuery('section.open-positions table tbody tr:contains("' + symbol + '") td:eq(0) .su-checkbox-box')[0]);
         } else if(e.data == 'close-positions') {
             
+        } else if(e.data.indexOf('price-update') != -1) {
+            window.parent.postMessage(e.data, "http://minestocks.com/");
         } else if(e.data.indexOf('cancel-order') != -1) {
           var symbol = e.data.split(':');
           symbol = symbol[1];
