@@ -1,3 +1,5 @@
+
+#tv_chart_container{height: 443px !important;}
 .chart-wrapper .drawer{width: 60% !important; overflow: hidden !important; min-width: 290px; display: none;}
 .chart-wrapper .closed-drawer.inapp-chart{display: none !important;}
 .icon-toggles{display: block !important;}
